@@ -3,13 +3,13 @@
 	"AddIfUsedInQuestsToDesc": true,
 	"BackgroundColor": {
 		"Factory": "green",
-		"Customs": "default",
+		"Customs": "blue",
 		"Woods": "tracerGreen",
 		"Shoreline": "orange",
 		"Interchange": "tracerRed",
 		"Laboratory": "tracerYellow",
 		"Reserve": "violet",
-		"Lighthouse": "blue",
+		"Lighthouse": "red",
 		"JunkKeys": "black"
 	}
 }

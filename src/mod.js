@@ -8,11 +8,12 @@ class Mod {
 		const JsonUtil = container.resolve("JsonUtil");
 		const VFS = container.resolve("VFS");
 		const config = require("../config/config.json");
-		const modDb = JsonUtil.deserialize(VFS.readFile("user/mods/ColorCodedKeys/db/keys.json"))
-		const modLocalePath = `user/mods/ColorCodedKeys/locale/`
-		
+		const modDb = JsonUtil.deserialize(VFS.readFile("user/mods/ColorCodedKeys/db/keys.json"));
+		const modLocalePath = `user/mods/ColorCodedKeys/locale`;
+		const localeEn = JsonUtil.deserialize(VFS.readFile(`${modLocalePath}/en.json`));
 		
 		// da code
+		// to do: rewrite this piece of shit code, and a note: sleep deprivation does not help you code
 		for (const mapId in modDb.Maps) {
 			for (const keyId of modDb.Maps[mapId]) {
 				if (database.templates.items[keyId]) {
@@ -26,9 +27,19 @@ class Mod {
 					
 					// change locale
 					for (const localeId in database.locales.global) {
-						let ogDesc = database.locales.global[localeId].templates[keyId].Description
-						let newLocale = `Map: ${database.locales.global[localeId].interface[mapId]}.\n${Mod.isConfigQuestsEnabled(config, keyId, modDb)}.\n`
-						database.locales.global[localeId].templates[keyId].Description = newLocale + ogDesc
+						let ogDesc = database.locales.global[localeId].templates[keyId].Description;
+						
+						// apply placeholder en locale first
+						let tempString = `${localeEn.mapString}: ${database.locales.global[localeId].interface[mapId]}.\n${Mod.isConfigQuestsEnabled(config, keyId, modDb, localeEn)}\n`;
+						database.locales.global[localeId].templates[keyId].Description = tempString + ogDesc;
+						
+						// auto detecet locale and apply it
+						if (VFS.exists(`${modLocalePath}/${localeId}.json`)) {
+							let loadedLocale = JsonUtil.deserialize(VFS.readFile(`${modLocalePath}/${localeId}.json`));
+							let newString = `${loadedLocale.mapString}: ${database.locales.global[localeId].interface[mapId]}.\n${Mod.isConfigQuestsEnabled(config, keyId, modDb, loadedLocale)}\n`;
+							
+							database.locales.global[localeId].templates[keyId].Description = newString + ogDesc;
+						};
 					};
 				};
 			};
@@ -43,17 +54,17 @@ class Mod {
 		
 	}
 	
-	static isUsedInQuests(keyId, modDb) {
+	static isUsedInQuests(keyId, modDb, locale) {
 		if (modDb.KeysUsedInQuest.includes(keyId)) {
-			return "Yes";
+			return locale.yes;
 		};
 		
-		return "No";
+		return locale.no;
 	}
 	
-	static isConfigQuestsEnabled(config, keyId, modDb) {
+	static isConfigQuestsEnabled(config, keyId, modDb, locale) {
 		if (config.AddIfUsedInQuestsToDesc) {
-			return `Used in Quests: ${Mod.isUsedInQuests(keyId, modDb)}\n`;
+			return `${locale.questString}: ${Mod.isUsedInQuests(keyId, modDb, locale)}.\n`;
 		};
 		
 		return "";
