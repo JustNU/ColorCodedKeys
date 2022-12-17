@@ -5,12 +5,12 @@ class Mod {
 		// constants
 		const logger = container.resolve("WinstonLogger");
 		const database = container.resolve("DatabaseServer").getTables();
-		const JsonUtil = container.resolve("JsonUtil");
+		const jsonUtil = container.resolve("JsonUtil");
 		const VFS = container.resolve("VFS");
 		const config = require("../config/config.json");
-		const modDb = JsonUtil.deserialize(VFS.readFile("user/mods/ColorCodedKeys/db/keys.json"));
+		const modDb = jsonUtil.deserialize(VFS.readFile("user/mods/ColorCodedKeys/db/keys.json"));
 		const modLocalePath = `user/mods/ColorCodedKeys/locale`;
-		const localeEn = JsonUtil.deserialize(VFS.readFile(`${modLocalePath}/en.json`));
+		const localeEn = jsonUtil.deserialize(VFS.readFile(`${modLocalePath}/en.json`));
 		
 		// da code
 		// to do: rewrite this piece of shit code, and a note: sleep deprivation does not help you code
@@ -35,7 +35,7 @@ class Mod {
 						
 						// auto detecet locale and apply it
 						if (VFS.exists(`${modLocalePath}/${localeId}.json`)) {
-							let loadedLocale = JsonUtil.deserialize(VFS.readFile(`${modLocalePath}/${localeId}.json`));
+							let loadedLocale = jsonUtil.deserialize(VFS.readFile(`${modLocalePath}/${localeId}.json`));
 							let newString = `${loadedLocale.mapString}: ${database.locales.global[localeId].interface[mapId]}.\n${Mod.isConfigQuestsEnabled(config, keyId, modDb, loadedLocale)}\n`;
 							
 							database.locales.global[localeId].templates[keyId].Description = newString + ogDesc;
