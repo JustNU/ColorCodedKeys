@@ -22,42 +22,42 @@ class Mod {
 					if (!config.ChangeMarkedKeysBackground && modDb.MarkedKeys.includes(keyId)) {
 						database.templates.items[keyId]._props.BackgroundColor = "yellow";
 					} else {
-						database.templates.items[keyId]._props.BackgroundColor = config.BackgroundColor[database.locales.global["en"].interface[mapId]];
-					};
+						database.templates.items[keyId]._props.BackgroundColor = config.BackgroundColor[database.locales.global["en"][mapId]];
+					}
 					
 					// change locale
 					for (const localeId in database.locales.global) {
-						let ogDesc = database.locales.global[localeId].templates[keyId].Description;
+						const ogDesc = database.locales.global[localeId][`${keyId} Description`];
 						
 						// apply placeholder en locale first
-						let tempString = `${localeEn.mapString}: ${database.locales.global[localeId].interface[mapId]}.\n${Mod.isConfigQuestsEnabled(config, keyId, modDb, localeEn)}\n`;
-						database.locales.global[localeId].templates[keyId].Description = tempString + ogDesc;
+						const tempString = `${localeEn.mapString}: ${database.locales.global[localeId][mapId]}.\n${Mod.isConfigQuestsEnabled(config, keyId, modDb, localeEn)}\n`;
+						database.locales.global[localeId][`${keyId} Description`] = tempString + ogDesc;
 						
 						// auto detecet locale and apply it
 						if (VFS.exists(`${modLocalePath}/${localeId}.json`)) {
-							let loadedLocale = jsonUtil.deserialize(VFS.readFile(`${modLocalePath}/${localeId}.json`));
-							let newString = `${loadedLocale.mapString}: ${database.locales.global[localeId].interface[mapId]}.\n${Mod.isConfigQuestsEnabled(config, keyId, modDb, loadedLocale)}\n`;
+							const loadedLocale = jsonUtil.deserialize(VFS.readFile(`${modLocalePath}/${localeId}.json`));
+							const newString = `${loadedLocale.mapString}: ${database.locales.global[localeId][mapId]}.\n${Mod.isConfigQuestsEnabled(config, keyId, modDb, loadedLocale)}\n`;
 							
-							database.locales.global[localeId].templates[keyId].Description = newString + ogDesc;
-						};
-					};
-				};
-			};
-		};
+							database.locales.global[localeId][`${keyId} Description`] = newString + ogDesc;
+						}
+					}
+				}
+			}
+		}
 		
 		// handle junk keys
 		for (const junkKeyId of modDb.JunkKeys) {
 			if (database.templates.items[junkKeyId]) {
 				database.templates.items[junkKeyId]._props.BackgroundColor = config.BackgroundColor.JunkKeys;
-			};
-		};
+			}
+		}
 		
 	}
 	
 	static isUsedInQuests(keyId, modDb, locale) {
 		if (modDb.KeysUsedInQuest.includes(keyId)) {
 			return locale.yes;
-		};
+		}
 		
 		return locale.no;
 	}
@@ -65,7 +65,7 @@ class Mod {
 	static isConfigQuestsEnabled(config, keyId, modDb, locale) {
 		if (config.AddIfUsedInQuestsToDesc) {
 			return `${locale.questString}: ${Mod.isUsedInQuests(keyId, modDb, locale)}.\n`;
-		};
+		}
 		
 		return "";
 	}
