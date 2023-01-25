@@ -2,7 +2,7 @@
     "name": "Color-coded Keys",
     "author": "JustNU",
     "version": "1.0.0",
-    "license": "MIT",
+    "license": "Unlicense",
     "main": "src/mod.js",
 	"akiVersion": "3.4.*"
 }
