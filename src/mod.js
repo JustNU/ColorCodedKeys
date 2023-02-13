@@ -53,6 +53,14 @@ class Mod {
 			}
 		}
 		
+		// debug
+		const debug = true;
+		if (debug) {
+			for (const itemId in database.templates.items) {
+				database.templates.items[itemId]._props.ExaminedByDefault = true;
+			}
+		}
+		
 	}
 	
 	static isUsedInQuests(keyId, data, locale) {
